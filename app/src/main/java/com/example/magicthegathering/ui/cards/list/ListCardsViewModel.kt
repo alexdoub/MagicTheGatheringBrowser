@@ -1,4 +1,4 @@
-package com.example.magicthegathering.ui.main
+package com.example.magicthegathering.ui.cards.list
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

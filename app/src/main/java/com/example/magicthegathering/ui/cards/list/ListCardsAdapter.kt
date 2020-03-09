@@ -1,4 +1,4 @@
-package com.example.magicthegathering.ui.main
+package com.example.magicthegathering.ui.cards.list
 
 /**
  * Created by Alex Doub on 3/8/2020.
@@ -12,16 +12,21 @@ import com.example.magicthegathering.core.data.CardItem
 import com.example.magicthegathering.databinding.ListCardItemBinding
 import com.squareup.picasso.Picasso
 
-class ListCardsAdapter() : RecyclerView.Adapter<CardItemViewHolder>() {
+interface IOnItemClickedListener {
+    fun itemClicked(id: String)
+}
+
+class ListCardsAdapter(private val listener: IOnItemClickedListener) :
+    RecyclerView.Adapter<CardItemViewHolder>() {
 
     var items: List<CardItem> = emptyList()
         set(value) {
-            field = value.subList(0, 1)
+            field = value
             notifyDataSetChanged()
         }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CardItemViewHolder {
-        return CardItemViewHolder(parent.context)
+        return CardItemViewHolder(parent.context, listener)
     }
 
     override fun getItemCount(): Int {
@@ -31,21 +36,19 @@ class ListCardsAdapter() : RecyclerView.Adapter<CardItemViewHolder>() {
     override fun onBindViewHolder(holder: CardItemViewHolder, position: Int) {
         holder.bind(items[position])
     }
-
 }
 
-
 class CardItemViewHolder(
-    val context: Context,
-    val binding: ListCardItemBinding = ListCardItemBinding.inflate(LayoutInflater.from(context))
+    context: Context,
+    private val listener: IOnItemClickedListener,
+    private val binding: ListCardItemBinding = ListCardItemBinding.inflate(LayoutInflater.from(context))
 ) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(item: CardItem) {
-        val b = Picasso.Builder(context)
-        b.listener { picasso, uri, exception ->
-            println("URI:$uri")
+        Picasso.get().load(item.imageUrl).into(binding.image)
+
+        binding.root.setOnClickListener {
+            listener.itemClicked(item.id)
         }
-        val p = b.build()
-        p.load(item.imageUrl).into(binding.image)
     }
 }

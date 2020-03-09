@@ -2,7 +2,7 @@ package com.example.magicthegathering
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.example.magicthegathering.ui.main.ListCardsFragment
+import com.example.magicthegathering.ui.cards.list.ListCardsFragment
 
 class MainActivity : AppCompatActivity() {
 
