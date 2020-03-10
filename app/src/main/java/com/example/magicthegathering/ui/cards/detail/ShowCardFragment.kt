@@ -1,14 +1,15 @@
 package com.example.magicthegathering.ui.cards.detail
 
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.example.magicthegathering.R
 import com.example.magicthegathering.core.data.CardItem
 import com.example.magicthegathering.core.network.MagicAPIClient
 import com.example.magicthegathering.databinding.ShowCardFragmentBinding
@@ -22,20 +23,16 @@ import kotlinx.coroutines.launch
 
 class ShowCardFragment : Fragment() {
     companion object {
-//        fun newInstance(id: String, imgUrl: String): ShowCardFragment {
-//            return ShowCardFragment().apply {
-//                arguments = bundleOf(
-//                    "ID" to id,
-//                    "URL" to imgUrl
-//                )
-//            }
-//        }
-
         fun newInstance(cardItem: CardItem): ShowCardFragment {
             return ShowCardFragment().apply {
                 arguments = bundleOf("OBJ" to Gson().toJson(cardItem))
             }
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
     }
 
     lateinit var binding: ShowCardFragmentBinding
@@ -46,6 +43,11 @@ class ShowCardFragment : Fragment() {
         }
         loadFromArgs()
         return binding.root
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        menu.clear()
     }
 
     fun loadFromArgs() {
@@ -63,8 +65,7 @@ class ShowCardFragment : Fragment() {
     }
 
     private fun setData(cardItem: CardItem) {
-        Picasso.get().load(cardItem.imageUrl)
-            .into(binding.image)
+        Picasso.get().load(cardItem.imageUrl).into(binding.image)
         binding.name.text = cardItem.name
         binding.cardText.text = cardItem.originalText
         binding.manaCost.text = cardItem.manaCost
@@ -83,5 +84,13 @@ class ShowCardFragment : Fragment() {
         binding.types.setTextColor(color)
         binding.cardText.setTextColor(color)
         binding.manaCost.setTextColor(color)
+
+        binding.cmc.removeAllViews()
+        for (x in 1..cardItem.cmc) {
+            val manaIcon = requireContext().resources.getDrawable(R.drawable.ic_mana)
+            val imageView = ImageView(requireContext())
+            imageView.setImageDrawable(manaIcon)
+            binding.cmc.addView(imageView)
+        }
     }
 }

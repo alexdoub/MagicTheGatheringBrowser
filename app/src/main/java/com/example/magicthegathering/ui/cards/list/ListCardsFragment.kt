@@ -1,23 +1,18 @@
 package com.example.magicthegathering.ui.cards.list
 
 import android.os.Bundle
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.magicthegathering.R
 import com.example.magicthegathering.core.network.MagicAPIClient
 import com.example.magicthegathering.databinding.ListCardsFragmentBinding
 import com.example.magicthegathering.ui.cards.detail.ShowCardFragment
-import com.google.gson.Gson
-import kotlinx.android.synthetic.main.main_activity.view.*
 import kotlinx.coroutines.launch
+import java.lang.StringBuilder
 
 class ListCardsFragment : Fragment(), IOnItemClickedListener {
 
@@ -27,6 +22,11 @@ class ListCardsFragment : Fragment(), IOnItemClickedListener {
 
     private val adapter = ListCardsAdapter(this)
     private lateinit var binding: ListCardsFragmentBinding
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,6 +39,28 @@ class ListCardsFragment : Fragment(), IOnItemClickedListener {
         binding.recyclerView.layoutManager = GridLayoutManager(context, 4)
         binding.lifecycleOwner = viewLifecycleOwner
         return binding.root
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.list_cards_menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.rarities) {
+            val rarities = adapter.items.groupBy { it.rarity }.mapValues { it.value.size }
+            val raritiesString = rarities.map { "${it.key}: ${it.value}" }.joinToString(separator = "\n")
+            AlertDialog.Builder(requireContext())
+                .setTitle("Rarities")
+                .setMessage(raritiesString)
+                .setPositiveButton("Done") { a, b ->
+                    a.dismiss()
+                }
+                .show()
+            return true
+        } else {
+            return super.onOptionsItemSelected(item)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
