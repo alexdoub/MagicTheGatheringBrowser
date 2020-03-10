@@ -39,7 +39,7 @@ class ShowCardFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = ShowCardFragmentBinding.inflate(inflater, container, false)
         binding.root.setOnClickListener {
-            Toast.makeText(context, "Tapped", Toast.LENGTH_SHORT).show()
+            parentFragmentManager.popBackStack()
         }
         loadFromArgs()
         return binding.root
