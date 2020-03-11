@@ -46,11 +46,13 @@ dependencies {
 
     // AndroidX
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.core:core-ktx:1.2.0'
+
+    // AndroidX Lifecycle
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0' // Viewmodel lifecycle scopes
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.2.0" // Fragment & Activity lifecycle scopes
+
+    // AndroidX UI
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.2.0"
     implementation "androidx.recyclerview:recyclerview:1.1.0"
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
 

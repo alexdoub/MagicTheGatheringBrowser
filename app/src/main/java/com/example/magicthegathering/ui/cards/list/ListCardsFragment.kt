@@ -2,9 +2,9 @@ package com.example.magicthegathering.ui.cards.list
 
 import android.os.Bundle
 import android.view.*
-import androidx.fragment.app.Fragment
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.magicthegathering.R
@@ -12,7 +12,6 @@ import com.example.magicthegathering.core.network.MagicAPIClient
 import com.example.magicthegathering.databinding.ListCardsFragmentBinding
 import com.example.magicthegathering.ui.cards.detail.ShowCardFragment
 import kotlinx.coroutines.launch
-import java.lang.StringBuilder
 
 class ListCardsFragment : Fragment(), IOnItemClickedListener {
 
@@ -69,12 +68,10 @@ class ListCardsFragment : Fragment(), IOnItemClickedListener {
     }
 
     override fun itemClicked(id: String) {
-
         val thatItem = adapter.items.find { it.id == id } ?: return
-
-        parentFragmentManager.beginTransaction()
-            .add(R.id.container, ShowCardFragment.newInstance(thatItem), "1")
-            .addToBackStack(null)
+        fragmentManager!!.beginTransaction()
+            .add(R.id.container, ShowCardFragment.newInstance(thatItem))
+            .addToBackStack(null)   // Add transaction to back stack. Allows for popping back to this one
             .commit()
     }
 

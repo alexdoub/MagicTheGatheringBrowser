@@ -1,12 +1,9 @@
 package com.example.magicthegathering.ui.cards.detail
 
 import android.graphics.Color
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.*
 import android.widget.ImageView
-import android.widget.Toast
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.magicthegathering.R
@@ -25,7 +22,8 @@ class ShowCardFragment : Fragment() {
     companion object {
         fun newInstance(cardItem: CardItem): ShowCardFragment {
             return ShowCardFragment().apply {
-                arguments = bundleOf("OBJ" to Gson().toJson(cardItem))
+                val json = Gson().toJson(cardItem)
+                arguments = Bundle().apply { putString("OBJ", json) }
             }
         }
     }
@@ -39,7 +37,7 @@ class ShowCardFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = ShowCardFragmentBinding.inflate(inflater, container, false)
         binding.root.setOnClickListener {
-            parentFragmentManager.popBackStack()
+            fragmentManager!!.popBackStack()
         }
         loadFromArgs()
         return binding.root
