@@ -26,7 +26,7 @@ class ListCardsAdapter(private val listener: IOnItemClickedListener) :
         }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CardItemViewHolder {
-        return CardItemViewHolder(parent.context, listener)
+        return CardItemViewHolder(parent, listener)
     }
 
     override fun getItemCount(): Int {
@@ -39,9 +39,9 @@ class ListCardsAdapter(private val listener: IOnItemClickedListener) :
 }
 
 class CardItemViewHolder(
-    context: Context,
+    parent: ViewGroup,
     private val listener: IOnItemClickedListener,
-    private val binding: ListCardItemBinding = ListCardItemBinding.inflate(LayoutInflater.from(context))
+    private val binding: ListCardItemBinding = ListCardItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
 ) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(item: CardItem) {

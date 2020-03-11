@@ -2,11 +2,14 @@ package com.example.magicthegathering.ui.cards.list
 
 import android.os.Bundle
 import android.view.*
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.magicthegathering.R
 import com.example.magicthegathering.core.network.MagicAPIClient
 import com.example.magicthegathering.databinding.ListCardsFragmentBinding
@@ -32,10 +35,11 @@ class ListCardsFragment : Fragment(), IOnItemClickedListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = ListCardsFragmentBinding.inflate(LayoutInflater.from(context))
+        binding = ListCardsFragmentBinding.inflate(LayoutInflater.from(context), container, false)
         binding.swipe.setOnRefreshListener { fetchCards() }
         binding.recyclerView.adapter = adapter
-        binding.recyclerView.layoutManager = GridLayoutManager(context, 4)
+        binding.recyclerView.layoutManager = GridLayoutManager(context, 4, RecyclerView.VERTICAL, false)
+//        binding.recyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
         binding.lifecycleOwner = viewLifecycleOwner
         return binding.root
     }
@@ -43,6 +47,7 @@ class ListCardsFragment : Fragment(), IOnItemClickedListener {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.list_cards_menu, menu)
+        requireActivity().title = "Full Cards List"
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -69,7 +74,7 @@ class ListCardsFragment : Fragment(), IOnItemClickedListener {
 
     override fun itemClicked(id: String) {
         val thatItem = adapter.items.find { it.id == id } ?: return
-        fragmentManager!!.beginTransaction()
+        requireFragmentManager().beginTransaction()
             .add(R.id.container, ShowCardFragment.newInstance(thatItem))
             .addToBackStack(null)   // Add transaction to back stack. Allows for popping back to this one
             .commit()

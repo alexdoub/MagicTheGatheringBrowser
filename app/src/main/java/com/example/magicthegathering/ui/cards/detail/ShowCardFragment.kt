@@ -46,6 +46,7 @@ class ShowCardFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         menu.clear()
+        requireActivity().title = "Details"
     }
 
     fun loadFromArgs() {
