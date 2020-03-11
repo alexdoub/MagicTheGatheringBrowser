@@ -20,6 +20,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ui.cards.detail.ShowCardActivity"
+            android:theme="@style/AppTheme.Translucent" />
     </application>
 
 </manifest>

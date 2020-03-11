@@ -1,10 +1,12 @@
 package com.example.magicthegathering.ui.cards.detail
 
+import android.app.Activity
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.view.*
 import android.widget.ImageView
-import androidx.fragment.app.Fragment
+import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import com.example.magicthegathering.R
 import com.example.magicthegathering.core.data.CardItem
@@ -15,42 +17,34 @@ import com.squareup.picasso.Picasso
 import kotlinx.coroutines.launch
 
 /**
- * Created by Alex Doub on 3/8/2020.
+ * Created by Alex Doub on 3/11/2020.
  */
 
-class ShowCardFragment : Fragment() {
-    companion object {
-        fun newInstance(cardItem: CardItem): ShowCardFragment {
-            return ShowCardFragment().apply {
-                val json = Gson().toJson(cardItem)
-                arguments = Bundle().apply { putString("OBJ", json) }
-            }
-        }
-    }
+class ShowCardActivity : AppCompatActivity() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
+    companion object {
+        fun start(parent: Activity, cardItem: CardItem) {
+            val intent = Intent(parent, ShowCardActivity::class.java)
+            intent.putExtra("OBJ", Gson().toJson(cardItem))
+            parent.startActivity(intent)
+        }
     }
 
     lateinit var binding: ShowCardFragmentOrActivityBinding
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = ShowCardFragmentOrActivityBinding.inflate(inflater, container, false)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = DataBindingUtil.setContentView(this, R.layout.show_card_fragment_or_activity)
         binding.root.setOnClickListener {
-            fragmentManager!!.popBackStack()
+            finish()
+            overridePendingTransition(0, 0)
         }
         loadFromArgs()
-        return binding.root
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-        menu.clear()
-        requireActivity().title = "Details"
+        title = "Details"
     }
 
     fun loadFromArgs() {
-        val argJson = requireArguments().getString("OBJ")
+
+        val argJson = intent.getStringExtra("OBJ")
         val item = Gson().fromJson(argJson, CardItem::class.java)
         setData(item)
         fetchData(item.id)
@@ -86,8 +80,8 @@ class ShowCardFragment : Fragment() {
 
         binding.cmc.removeAllViews()
         for (x in 1..cardItem.cmc) {
-            val manaIcon = requireContext().resources.getDrawable(R.drawable.ic_mana)
-            val imageView = ImageView(requireContext())
+            val manaIcon = resources.getDrawable(R.drawable.ic_mana, null)
+            val imageView = ImageView(this)
             imageView.setImageDrawable(manaIcon)
             binding.cmc.addView(imageView)
         }
