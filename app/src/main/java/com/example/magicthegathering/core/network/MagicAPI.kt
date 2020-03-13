@@ -19,7 +19,7 @@ interface MagicAPI {
     @GET("cards")
     fun getCards_rx(): Single<CardsResponse>
 
-    @GET("cardzs")
+    @GET("cards")
     suspend fun getCards_cr(): CardsResponse
 
     @GET("cards")
