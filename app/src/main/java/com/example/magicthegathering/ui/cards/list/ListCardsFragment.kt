@@ -9,10 +9,18 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.magicthegathering.R
+import com.example.magicthegathering.core.data.CardsResponse
 import com.example.magicthegathering.core.network.MagicAPIClient
 import com.example.magicthegathering.databinding.ListCardsFragmentBinding
 import com.example.magicthegathering.ui.cards.detail.ShowCardActivity
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class ListCardsFragment : Fragment(), IOnItemClickedListener {
 
@@ -22,6 +30,8 @@ class ListCardsFragment : Fragment(), IOnItemClickedListener {
 
     private val adapter = ListCardsAdapter(this)
     private lateinit var binding: ListCardsFragmentBinding
+    private val viewDisposables = CompositeDisposable()
+    private var calls = ArrayList<Call<*>>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,17 +90,72 @@ class ListCardsFragment : Fragment(), IOnItemClickedListener {
 //            .commit()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        calls.forEach { it.cancel() }
+        viewDisposables.clear()
+    }
+
     private fun fetchCards() {
+        fetchCards_cr()
+//        fetchCards_rx()
+//        fetchCards_standard()
+    }
+
+    private fun fetchCards_cr() {
+
         lifecycleScope.launch {
             binding.swipe.isRefreshing = true
             try {
-                val response = MagicAPIClient.getCards()
+                val response = MagicAPIClient.getCards_cr()
                 adapter.items = response.cards
-            } catch (e: Throwable) {
-                Toast.makeText(context, "Error fetching from server: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
-            } finally {
                 binding.swipe.isRefreshing = false
+            } catch (e: Throwable) {
+                if (e !is CancellationException) {
+                    Toast.makeText(context, "Error fetching from server: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+                    binding.swipe.isRefreshing = false
+                }
             }
         }
+    }
+
+    private fun fetchCards_rx() {
+
+        binding.swipe.isRefreshing = true
+        val fetchCards = MagicAPIClient.getCards_rx()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ response ->
+                adapter.items = response.cards
+                binding.swipe.isRefreshing = false
+            }, { e ->
+                Toast.makeText(context, "Error fetching from server: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+                binding.swipe.isRefreshing = false
+            })
+        viewDisposables.addAll(fetchCards)
+    }
+
+    private fun fetchCards_standard() {
+
+        binding.swipe.isRefreshing = true
+        val call = MagicAPIClient.getCards_standard()
+        call.enqueue(object : Callback<CardsResponse> {
+            override fun onResponse(call: Call<CardsResponse>, response: Response<CardsResponse>) {
+                response.body()?.let { body ->
+                    adapter.items = body.cards
+                    binding.swipe.isRefreshing = false
+                } ?: run {
+                    Toast.makeText(context, "Error fetching from server: Body missing", Toast.LENGTH_SHORT).show()
+                    binding.swipe.isRefreshing = false
+                }
+            }
+
+            override fun onFailure(call: Call<CardsResponse>, t: Throwable) {
+                if (call.isCanceled) return
+                Toast.makeText(context, "Error fetching from server: ${t.localizedMessage}", Toast.LENGTH_SHORT).show()
+                binding.swipe.isRefreshing = false
+            }
+        })
+        calls.add(call)
     }
 }
