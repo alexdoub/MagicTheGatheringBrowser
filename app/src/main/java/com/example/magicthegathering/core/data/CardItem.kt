@@ -7,7 +7,7 @@ data class CardItem(
     val colors: List<String>,
     val foreignNames: List<ForeignName>,
     val id: String,
-    val imageUrl: String,
+    val imageUrl: String?,
     val layout: String,
     val manaCost: String,
     val multiverseid: Int,

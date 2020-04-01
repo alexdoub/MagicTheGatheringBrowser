@@ -108,7 +108,7 @@ class ListCardsFragment : Fragment(), IOnItemClickedListener {
             binding.swipe.isRefreshing = true
             try {
                 val response = MagicAPIClient.getCards_cr()
-                adapter.items = response.cards
+                adapter.items = response.cards.filter { it.imageUrl != null }
                 binding.swipe.isRefreshing = false
             } catch (e: Throwable) {
                 if (e !is CancellationException) {

@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.view.Menu
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -42,7 +43,7 @@ class ShowCardActivity : AppCompatActivity() {
         title = "Details"
     }
 
-    fun loadFromArgs() {
+    private fun loadFromArgs() {
 
         val argJson = intent.getStringExtra("OBJ")
         val item = Gson().fromJson(argJson, CardItem::class.java)
@@ -50,7 +51,7 @@ class ShowCardActivity : AppCompatActivity() {
         fetchData(item.id)
     }
 
-    fun fetchData(id: String) {
+    private fun fetchData(id: String) {
         lifecycleScope.launch {
             val response = MagicAPIClient.getCard(id)
             setData(response.card)

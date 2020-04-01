@@ -4,7 +4,6 @@ package com.example.magicthegathering.ui.cards.list
  * Created by Alex Doub on 3/8/2020.
  */
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
